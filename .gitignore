@@ -1,0 +1,10 @@
+*.iws
+*.iml
+/.idea
+/build/
+
+# project files
+/.classpath
+/.project
+*.log
+log/

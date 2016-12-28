@@ -1,0 +1,26 @@
+group 'com.gsgenetics.plugins.gradle'
+version '1.0'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+//sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+test {
+    //set the system properties that get passed to tests running on a separate jvm
+    //this is equivalent to passing parameters via -D jvm arg
+    systemProperty 'GIT_REVISION', 'TestGitRevision'
+    systemProperty 'BUILD_TAG', 'TestBuildTag'
+}
