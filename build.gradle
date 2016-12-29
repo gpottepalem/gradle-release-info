@@ -1,11 +1,23 @@
-group 'com.gsgenetics.plugins.gradle'
-version '1.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+//only buildscript {} and other plugins {} script blocks are allowed before plugins {} blocks, no other statements are allowed
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
 
 apply plugin: 'groovy'
-apply plugin: 'maven'
 
-//sourceCompatibility = 1.5
+apply from: 'gradle/bintray.gradle'
+apply from: 'gradle/publishing.gradle'
 
+group 'com.gsgenetics.plugins.gradle'
+version '1.0'
+description """
+A simple Gradle plugin to populate application.yml with release-info details passed-in as properties throuh -P or -D flags to build script 
+"""
 repositories {
     mavenCentral()
 }
@@ -19,8 +31,13 @@ dependencies {
 }
 
 test {
-    //set the system properties that get passed to tests running on a separate jvm
-    //this is equivalent to passing parameters via -D jvm arg
+    /* Set system properties that get passed to tests running on a separate jvm,
+    this is equivalent to passing parameters via -D jvm arg */
     systemProperty 'GIT_REVISION', 'TestGitRevision'
     systemProperty 'BUILD_TAG', 'TestBuildTag'
+}
+
+task release {
+    description = "Releases a version of this plugin onto JFrog Bintray repository and distribution platform"
+    dependsOn bintrayUpload
 }

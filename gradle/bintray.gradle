@@ -1,0 +1,32 @@
+/*
+ * Handles publication of distributions to Good Start Genetics JFrog Bintray repository and distribution platform
+ * Ref: https://github.com/bintray/gradle-bintray-plugin
+ */
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['releaseInfoPublication'] //see publishing.gradle
+
+    pkg {
+        userOrg = 'goodstartgenetics' //publish to an organization, https://bintray.com/goodstartgenetics
+        repo = 'gradle-plugins'
+        name = project.name //package name
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/gpottepalem/gradle-release-info'
+        vcsUrl = 'https://github.com/gpottepalem/gradle-release-info.git'
+        issueTrackerUrl = 'https://github.com/gpottepalem/gradle-release-info/issues'
+        labels = ['resources', 'release', 'release-info', 'gradle', 'gradle-plugin']
+        publicDownloadNumbers = true
+
+        version {
+            name = project.version //version name
+            desc = "Gradle release-info Plugin ${project.version}"
+            released  = new Date()
+            vcsTag = "${project.version}"
+            attributes = ['gradle-plugin': "$project.group:$project.name"]
+        }
+    }
+}

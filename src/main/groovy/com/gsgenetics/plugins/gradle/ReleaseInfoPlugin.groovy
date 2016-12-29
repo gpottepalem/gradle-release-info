@@ -26,12 +26,14 @@ import org.gradle.language.jvm.tasks.ProcessResources
  * or
  * ./gradlew -PGIT_REVISION=9f53be067c40191fa018d598105c3568924b3ee5 -PBUILD_TAG=GW-GWM-JOB1-30 assemble
  *
- * @author Gpottepalem
+ * @author Giri Pottepalem
  * Created on Dec 22, 2016
  *
- * @see https://docs.gradle.org/current/userguide/custom_plugins.html
- * @see https://docs.gradle.org/current/javadoc/org/gradle/language/jvm/tasks/ProcessResources.html
- * @see https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/AbstractCopyTask.html#filter(java.util.Map, java.lang.Class)
+ * @see <a href="https://docs.gradle.org/current/userguide/custom_plugins.html">Gradle - Writing Custom Plugins</a>
+ * @see <a href="https://docs.gradle.org/current/javadoc/org/gradle/language/jvm/tasks/ProcessResources.html">Gradle API - Class ProcessResources</a>
+ * @see <a href="https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/AbstractCopyTask.html#filter(java.util.Map, java.lang.Class)">Gradle API - filter method</a>
+ *
+ * @since 1.0
  */
 @Slf4j
 class ReleaseInfoPlugin implements Plugin<Project> {
@@ -39,19 +41,18 @@ class ReleaseInfoPlugin implements Plugin<Project> {
      * Utility method, converts a given string to camelCase by removing underscores.
      * @param text string to be converted
      * @param capitalize
-     * @return cames case string
+     * @return camelCase string
      */
     static String toCamelCase(String text, boolean capitalize = false) {
         text = text.toLowerCase().replaceAll("(_)([A-Za-z0-9])",
             { Object[] it-> it[2].toUpperCase()})
-        return capitalize ? capitalize(text) : text
+        return capitalize ? text.capitalize() : text
     }
 
     @Override
     void apply(Project project) {
         project.extensions.create('releaseInfo', ReleaseInfoPluginExtension)
         project.task('releaseInfo') {
-            //TODO: Read a properties file and get the list of release argument names, convert to camel case
             ReleaseInfoPluginExtension.RELEASE_INFO_VARIABLES.each {
                 String projectReleaseInfoProperty = toCamelCase(it)
                 //Support both -P and -D
@@ -63,22 +64,27 @@ class ReleaseInfoPlugin implements Plugin<Project> {
         }
 
         ProcessResources processResourcesTask = project.tasks.find{ it instanceof ProcessResources }
-        log.info "found processResourcesTask: ${processResourcesTask.description}..."
 
-        processResourcesTask.dependsOn 'releaseInfo'
+        if (processResourcesTask) {
+            log.info "found processResourcesTask: ${processResourcesTask.description}..."
+            processResourcesTask.dependsOn 'releaseInfo'
 
-        project.processResources {
-            log.info "Replacing ${ReleaseInfoPluginExtension.RELEASE_INFO_VARIABLES} in application.yml with ${project.releaseInfo.propertiesHolder.values()}..."
-            filesMatching("**/application.yml") {
-                //https://docs.gradle.org/current/javadoc/org/gradle/api/file/CopySpec.html#expand(java.util.Map)
-//                expand( [ 'BUILD_TAG'   : project.releaseInfo.gitRevision, 'GIT_REVISION': project.releaseInfo.buildTag])
-                filter(
-                    ReplaceTokens,
-                    tokens: ReleaseInfoPluginExtension.RELEASE_INFO_VARIABLES.collectEntries {
-                        [ (it): project.releaseInfo."${toCamelCase(it)}" ]
-                    }
-                )
+            project.processResources {
+                log.info "Replacing ${ReleaseInfoPluginExtension.RELEASE_INFO_VARIABLES} in application.yml with ${project.releaseInfo.propertiesHolder.values()}..."
+                filesMatching("**/application.yml") {
+                    //https://docs.gradle.org/current/javadoc/org/gradle/api/file/CopySpec.html#expand(java.util.Map)
+                    //expand( [ 'BUILD_TAG'   : project.releaseInfo.gitRevision, 'GIT_REVISION': project.releaseInfo.buildTag])
+                    filter(
+                        ReplaceTokens,
+                        tokens: ReleaseInfoPluginExtension.RELEASE_INFO_VARIABLES.collectEntries {
+                            [(it): project.releaseInfo."${toCamelCase(it)}"]
+                        }
+                    )
+                }
             }
+        }
+        else {
+            log.warn("ProcessResources task not found in the project and hence not processing any resources...")
         }
     }
 }

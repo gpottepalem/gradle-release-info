@@ -1,0 +1,70 @@
+/*
+ * Maven publishing artifacts configuration
+ */
+
+apply plugin: 'maven-publish'
+
+// custom tasks for creating source jars
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+// custom tasks for creating javadoc jars
+task javadocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'javadoc'
+    from groovydoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        releaseInfoPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+
+            artifact(sourcesJar) {
+                classifier 'src'
+            }
+
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+
+                    name project.name
+                    description project.description
+                    url 'https://github.com/gpottepalem/gradle-release-info'
+                    scm {
+                        url 'https://github.com/gpottepalem/gradle-release-info'
+                        connection 'scm:git:https://github.com/gpottepalem/gradle-release-info.git'
+                        developerConnection 'scm:git:git@github.com:gpottepalem/gradle-release-info.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'gpottepalem'
+                            name 'Giri Pottepalem'
+                            organization 'Good Start Genetics'
+                            email 'gpottepalem@gmail.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

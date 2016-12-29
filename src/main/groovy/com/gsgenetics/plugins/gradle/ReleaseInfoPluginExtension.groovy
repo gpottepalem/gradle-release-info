@@ -5,11 +5,13 @@ package com.gsgenetics.plugins.gradle
  * -D .
  * The properties to be held by this object are made dynamic with a Map of propertiesHolder and propertyMissing methods.
  *
- * @author Gpottepalem
+ * @author Giri Pottepalem
  * Created on Dec 22, 2016
  *
- * @see http://groovy-lang.org/metaprogramming.html#_propertymissing
- * @see https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build
+ * @see <a href="http://groovy-lang.org/metaprogramming.html#_propertymissing">Groovy - propertyMissing</a>
+ * @see <a herf="https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build">Gradle - Getting input from the build</a>
+ *
+ * @since 1.0
  */
 class ReleaseInfoPluginExtension {
     /** default release info variables that can be passed to project's build script via -D or -P options */

@@ -7,9 +7,10 @@ import org.junit.Test
 /**
  * Testcase to test plugin
  *
- * @see build.gradle for
- * @author Gpottepalem
+ * @author Giri Pottepalem
  * Created on Dec 22, 2016
+ *
+ * @see build.gradle for systemProperties passed for testing
  */
 class ReleaseInfoPluginTest extends GroovyTestCase {
 
@@ -23,7 +24,7 @@ class ReleaseInfoPluginTest extends GroovyTestCase {
 
     void testReleaseInfoTaskToProject() {
         Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply 'releaseInfo'
+        project.pluginManager.apply 'com.gsgenetics.plugins.gradle.release-info' //plugin id
 
         assertTrue project.tasks.releaseInfo != null
 
