@@ -1,5 +1,7 @@
 Release-Info Gradle Plugin
 ==========================
+[![Build Status](https://travis-ci.org/gpottepalem/gradle-release-info.svg?branch=master)](https://travis-ci.org/gpottepalem/gradle-release-info)
+
 A simple __Gradle plugin__ which holds release-info details passed-in as gradle project properties through ```-P``` flag 
 or as system properties through ```-D``` flag to the build script, 
 and replaces passed-in release-info property names found in ```application.yml``` file with their respective values in 
