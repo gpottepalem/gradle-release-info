@@ -12,7 +12,7 @@ A well-defined build job/plan leverages CI platform's capabilities, accesses sou
 available to the build job running the application's build script. In such cases, application build scripts are written 
 to populate appropriate application resource files with those details, thus getting them into the application for use.
 
-The __resource-info__ is a simple __Gradle plugin__ which holds release-info details passed-in as either gradle project 
+The __release-info__ is a simple __Gradle plugin__ which holds release-info details passed-in as either gradle project 
 properties through ```-P``` flag or as system properties through ```-D``` flag to the build script arguments, and 
 replaces passed-in release-info property names found in ```application.yml``` file with their respective values in the 
 deployable archive (```war```/```jar```) generated.
